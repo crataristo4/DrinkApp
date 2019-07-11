@@ -7,7 +7,7 @@
     <string name="enter_your_address">Enter your address</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="select_date_of_birth">Select Date of birth</string>
-    <string name="title_activity_home_page">HomePageActivity</string>
+    <string name="title_activity_home_page">Order a drink</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -22,9 +22,10 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="login">Login</string>
-    <string name="available_products">Available Products</string>
+    <string name="available_products">Available Drink Menu</string>
     <string name="price">Price : GHC </string>
-    <string name="ghc">GHC</string>
+    <string name="ghc3">GHC 3</string>
+    <string name="ghc5">GHC 5</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="cart_item_name">Cart Item Name</string>
     <string name="select_your_cup_size">Select your cup size</string>
@@ -33,16 +34,20 @@
     <string name="large_size">Large size</string>
     <string name="choose_sugar">Choose Sugar</string>
     <string name="_100">100% - Very sweet</string>
-    <string name="_70">70% - Sweet</string>
+    <string name="_75">75% - Sweet</string>
     <string name="_50">50% - Tasty</string>
     <string name="_25">25% - Not too Sweet</string>
     <string name="no_sugar">No Sugar</string>
     <string name="choose_ice">Choose Ice</string>
     <string name="no_ice">No Ice - warm</string>
     <string name="_100ice">100% - Iced</string>
-    <string name="_70ice">70% - Broken ice</string>
+    <string name="_75ice">75% - Broken ice</string>
     <string name="_50ice">50% - Moderate ice</string>
     <string name="_25ice">25% - Small Ice pieces</string>
     <string name="comment_here">Comment here</string>
+    <string name="menu_cat">Menu Categories</string>
+    <string name="toppings">Toppings</string>
+    <string name="toppings_added">Toppings Added</string>
+    <string name="cart_item">Cart Item</string>
 
 </resources>

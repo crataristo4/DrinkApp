@@ -1,14 +1,8 @@
 package com.hard.code.tech.drinkapp.model;
 
-import android.content.Context;
-
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-import androidx.databinding.BindingAdapter;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hard.code.tech.drinkapp.BR;
 
 public class MenuCategory extends BaseObservable {
@@ -53,12 +47,5 @@ public class MenuCategory extends BaseObservable {
         notifyPropertyChanged(BR.link);
     }
 
-    @BindingAdapter("app:imageUrl")
-    public static void loadImages(AppCompatImageView imageView, String link) {
-        Context context = imageView.getContext();
-        Glide.with(context)
-                .load(link)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
-    }
+
 }

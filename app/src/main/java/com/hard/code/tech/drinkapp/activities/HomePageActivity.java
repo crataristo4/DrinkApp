@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,10 +25,14 @@ import com.hard.code.tech.drinkapp.R;
 import com.hard.code.tech.drinkapp.adapters.MenuCategoryAdapter;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.api.RetrofitInterface;
+import com.hard.code.tech.drinkapp.database.datasource.CartRepository;
+import com.hard.code.tech.drinkapp.database.localstorage.CartDataSource;
+import com.hard.code.tech.drinkapp.database.localstorage.CartDatabase;
 import com.hard.code.tech.drinkapp.databinding.ActivityHomePageBinding;
 import com.hard.code.tech.drinkapp.model.Banners;
 import com.hard.code.tech.drinkapp.model.MenuCategory;
 import com.hard.code.tech.drinkapp.storage.SharedPrefManager;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,20 +46,21 @@ import io.reactivex.schedulers.Schedulers;
 public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ActivityHomePageBinding activityHomePageBinding;
-    private Toolbar toolbar;
     private List<MenuCategory> menuCategoryList = new ArrayList<>();
     private SliderLayout sliderLayout;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     private RetrofitInterface retrofitInterface;
     private MenuCategoryAdapter menuCategoryAdapter;
     private RecyclerView recyclerView;
+    private NotificationBadge badge;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityHomePageBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_page);
 
-        toolbar = activityHomePageBinding.layoutAppBarHome.toolbar;
+        Toolbar toolbar = activityHomePageBinding.layoutAppBarHome.toolbar;
         setSupportActionBar(toolbar);
 
 
@@ -89,6 +95,25 @@ public class HomePageActivity extends AppCompatActivity
         //get Menu
         getMenuItems();
 
+        //get toppings
+        getToppings();
+
+        //initialise room database
+        initRoomDatabase();
+
+    }
+
+    private void initRoomDatabase() {
+        RetrofitClient.cartDatabase = CartDatabase.getInstance(this);
+        RetrofitClient.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(RetrofitClient.cartDatabase.cartDAO()));
+    }
+
+    private void getToppings() {
+        compositeDisposable.add(
+                retrofitInterface.getMenuById(RetrofitClient.TOPPINGS_ID)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(drinkByIds -> RetrofitClient.toppingList = drinkByIds));
     }
 
     private void getMenuItems() {
@@ -157,12 +182,34 @@ public class HomePageActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_page, menu);
+        getMenuInflater().inflate(R.menu.menu_cart_item, menu);
+
+        View view = menu.findItem(R.id.action_cart).getActionView();
+        badge = view.findViewById(R.id.badge);
+
+        updateCounter();
+
         return true;
     }
 
+    private void updateCounter() {
+
+        if (badge == null) return;
+        runOnUiThread(() -> {
+
+            if (RetrofitClient.cartRepository.countCartItems() == 0) {
+                badge.setVisibility(View.INVISIBLE);
+            } else {
+                badge.setVisibility(View.VISIBLE);
+                badge.setText(String.valueOf(RetrofitClient.cartRepository.countCartItems()));
+            }
+
+        });
+
+    }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -178,7 +225,7 @@ public class HomePageActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -214,6 +261,11 @@ public class HomePageActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onResume() {
+        updateCounter();
+        super.onResume();
+    }
 
     @Override
     protected void onDestroy() {

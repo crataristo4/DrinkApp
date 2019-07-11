@@ -44,7 +44,10 @@ public class DrinksByMenuIdActivity extends AppCompatActivity {
         getDrinksById(RetrofitClient.menuCategory.getId());
 
         TextView catName = activityDrinksByMenuIdBinding.menuName;
-        catName.setText(RetrofitClient.menuCategory.getName());
+        if (RetrofitClient.menuCategory.getName() != null)
+            catName.setText(RetrofitClient.menuCategory.getName());
+        else
+            catName.setText(getString(R.string.menu_cat));
 
     }
 

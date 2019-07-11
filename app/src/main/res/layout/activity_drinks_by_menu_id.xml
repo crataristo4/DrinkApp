@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-
-<layout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
 
 <LinearLayout
@@ -12,40 +9,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="8"
     android:orientation="vertical"
     tools:context=".activities.DrinksByMenuIdActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3">
-
-        <ImageView
-            android:id="@+id/menuImageLink"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/kol" />
-
-
         <TextView
             android:id="@+id/menuName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:textColor="@android:color/black"
-            android:textSize="36sp"
+            android:background="@color/colorPrimaryDark"
+            android:padding="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
-    </FrameLayout>
-
-
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_weight="5"
         android:id="@+id/recyclerMenuById"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
 </layout>

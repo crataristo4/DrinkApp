@@ -9,6 +9,7 @@ import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.hard.code.tech.drinkapp.BR;
 
 public class DrinkById extends BaseObservable {
     private String id;
@@ -51,8 +52,14 @@ public class DrinkById extends BaseObservable {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    @BindingAdapter("drinks")
+    public static void loadDrinkToAlertDialogImage(AppCompatImageView imageView, String link) {
+        Context context = imageView.getContext();
+
+        Glide.with(context)
+                .load(link)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
     }
 
     @Bindable
@@ -73,12 +80,8 @@ public class DrinkById extends BaseObservable {
         this.price = price;
     }
 
-    @BindingAdapter("app:drinkImageUrl")
-    public static void loadDrinkImages(AppCompatImageView imageView, String link) {
-        Context context = imageView.getContext();
-        Glide.with(context)
-                .load(link)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
+    public void setLink(String link) {
+        this.link = link;
+        notifyPropertyChanged(BR.link);
     }
 }

@@ -54,16 +54,25 @@ dependencies {
     implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-
     //image slider
     implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'com.daimajia.slider:library:1.1.5@aar'
 
-    implementation "com.android.support:support-v4:+"
+   // implementation "com.android.support:support-v4:+"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation "io.reactivex.rxjava2:rxjava:2.2.6"
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.squareup.picasso:picasso:2.3.2'
 
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
+
+    def room_version = "2.1.0"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // optional - RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
+
+    implementation 'com.nex3z:notification-badge:1.0.2'
+
 }
