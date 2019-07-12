@@ -7,14 +7,14 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.DrinksByMenuIdActivity">
-
-        </activity>
+        <activity android:name=".activities.CartItemActivity"></activity>
+        <activity android:name=".activities.DrinksByMenuIdActivity"></activity>
         <activity android:name=".activities.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +28,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.RegisterActivity" />
-        <activity android:name=".activities.WelcomePageActivity"></activity>
+        <activity android:name=".activities.WelcomePageActivity" />
     </application>
 
 </manifest>

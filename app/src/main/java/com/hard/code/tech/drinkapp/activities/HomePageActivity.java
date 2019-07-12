@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -53,6 +54,7 @@ public class HomePageActivity extends AppCompatActivity
     private MenuCategoryAdapter menuCategoryAdapter;
     private RecyclerView recyclerView;
     private NotificationBadge badge;
+    AppCompatImageView cartIcon;
 
 
     @Override
@@ -134,7 +136,6 @@ public class HomePageActivity extends AppCompatActivity
                         recyclerView.setAdapter(menuCategoryAdapter);
 
 
-
                     }
                 }));
     }
@@ -186,6 +187,11 @@ public class HomePageActivity extends AppCompatActivity
 
         View view = menu.findItem(R.id.action_cart).getActionView();
         badge = view.findViewById(R.id.badge);
+        cartIcon = view.findViewById(R.id.cartIcon);
+
+        cartIcon.setOnClickListener(viewIcon -> {
+            startActivity(new Intent(HomePageActivity.this, CartItemActivity.class));
+        });
 
         updateCounter();
 
@@ -216,7 +222,8 @@ public class HomePageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_cart) {
+
             return true;
         }
 
@@ -263,8 +270,9 @@ public class HomePageActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        updateCounter();
+
         super.onResume();
+        updateCounter();
     }
 
     @Override

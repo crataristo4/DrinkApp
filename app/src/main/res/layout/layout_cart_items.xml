@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <variable
+            name="cartItem"
+            type="com.hard.code.tech.drinkapp.database.databasemodel.Cart" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgCartItemPhoto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/cart_item_image"
+                app:drinks="@{cartItem.imageUrl}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/drink" />
+
+            <TextView
+                android:id="@+id/txtCartItemName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@{cartItem.name}"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imgCartItemPhoto"
+                app:layout_constraintTop_toTopOf="@+id/imgCartItemPhoto" />
+
+            <TextView
+                android:id="@+id/txtSugarContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@{String.format(String.valueOf(cartItem.sugar),@string/percent)}"
+                app:layout_constraintEnd_toStartOf="@+id/txtIceContent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/imgCartItemPhoto"
+                app:layout_constraintTop_toBottomOf="@+id/txtCartItemName" />
+
+            <TextView
+                android:id="@+id/txtIceContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@{String.format(String.valueOf(cartItem.ice),@string/percent)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/txtSugarContent"
+                app:layout_constraintTop_toBottomOf="@+id/txtCartItemName" />
+
+            <TextView
+                android:id="@+id/txtCartItemPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/price_text_round_green"
+                android:padding="8dp"
+                android:text="@{String.valueOf(cartItem.price)}"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/imgCartItemPhoto"
+                app:layout_constraintEnd_toStartOf="@+id/btnCartItemQty"
+                app:layout_constraintStart_toEndOf="@+id/imgCartItemPhoto"
+                app:layout_constraintTop_toBottomOf="@+id/txtSugarContent"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+            <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+                android:id="@+id/btnCartItemQty"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_margin="8dp"
+                android:layout_marginTop="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/txtCartItemPrice"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/txtCartItemPrice"
+                tools:layout_editor_absoluteY="78dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

@@ -232,6 +232,7 @@ public class DrinksByMenuIdAdapter extends RecyclerView.Adapter<DrinksByMenuIdAd
 
             Glide.with(context).load(drinkByIdList.get(position).getLink()).into(addToCartBinding.imgItemImage);
 
+
             addToCartBinding.txtItemName.setText(new StringBuilder(drinkByIdList.get(position).getName())
                     .append(" x ")
                     .append(number)
@@ -277,7 +278,8 @@ public class DrinksByMenuIdAdapter extends RecyclerView.Adapter<DrinksByMenuIdAd
 
                     //create a new Cart Item
                     Cart addCartItem = new Cart(
-                            txtItemPrice.getText().toString(),
+                            addToCartBinding.txtItemName.getText().toString(),
+                            drinkByIdList.get(position).getLink(),
                             Integer.parseInt(number),
                             Double.parseDouble(String.valueOf(finalPrice)),
                             RetrofitClient.sugarContent,
