@@ -1,13 +1,17 @@
 package com.hard.code.tech.drinkapp.activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -18,6 +22,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
@@ -30,22 +36,35 @@ import com.hard.code.tech.drinkapp.database.datasource.CartRepository;
 import com.hard.code.tech.drinkapp.database.localstorage.CartDataSource;
 import com.hard.code.tech.drinkapp.database.localstorage.CartDatabase;
 import com.hard.code.tech.drinkapp.databinding.ActivityHomePageBinding;
+import com.hard.code.tech.drinkapp.databinding.NavHeaderHomePageBinding;
 import com.hard.code.tech.drinkapp.model.Banners;
 import com.hard.code.tech.drinkapp.model.MenuCategory;
 import com.hard.code.tech.drinkapp.storage.SharedPrefManager;
+import com.hard.code.tech.drinkapp.utils.ProgressRequestBody;
+import com.hard.code.tech.drinkapp.utils.UploadCallBack;
+import com.hard.code.tech.drinkapp.utils.Utils;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.nex3z.notificationbadge.NotificationBadge;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MultipartBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.hard.code.tech.drinkapp.utils.mConstants.FILE_REQUEST_PERMISSION;
 
 public class HomePageActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, UploadCallBack {
     private ActivityHomePageBinding activityHomePageBinding;
     private List<MenuCategory> menuCategoryList = new ArrayList<>();
     private SliderLayout sliderLayout;
@@ -54,8 +73,77 @@ public class HomePageActivity extends AppCompatActivity
     private MenuCategoryAdapter menuCategoryAdapter;
     private RecyclerView recyclerView;
     private NotificationBadge badge;
-    AppCompatImageView cartIcon;
+    boolean isBackPressed = false;
+    private AppCompatImageView cartIcon;
+    private CircleImageView image;
+    private Uri fileSelected;
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == FILE_REQUEST_PERMISSION) {
+
+                if (data != null) {
+
+                    fileSelected = data.getData();
+
+                    if ((fileSelected != null) && !fileSelected.getPath().isEmpty()) {
+
+                        /*Glide.with(HomePageActivity.this).load(fileSelected)
+                                .into(image);*/
+
+                        image.setImageURI(fileSelected);
+                        uploadFile();
+
+                    } else {
+                        Utils.displayToast(HomePageActivity.this, "Cannot upload file try again..");
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    private void uploadFile() {
+
+        if (fileSelected != null) {
+
+            File file = FileUtils.getFile(this, fileSelected);
+
+            String filename = new StringBuilder(RetrofitClient.currentUser.getPhone())
+                    .append(FileUtils.getExtension(file.toString()))
+                    .toString();
+
+            ProgressRequestBody requestFile = new ProgressRequestBody(file, this);
+
+            final MultipartBody.Part body = MultipartBody.Part.createFormData("imageUrl", filename, requestFile);
+
+            final MultipartBody.Part phone = MultipartBody.Part.createFormData("phone", RetrofitClient.currentUser.getPhone());
+
+            new Thread(() -> {
+
+                retrofitInterface.uploadFile(phone, body).enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+
+                        Utils.displayToast(HomePageActivity.this, response.body());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+
+                        Utils.displayToast(HomePageActivity.this, t.getLocalizedMessage());
+                    }
+                });
+
+            }).start();
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +162,38 @@ public class HomePageActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        //TODO bind items
         View view = navigationView.getHeaderView(0);
-        TextView name = view.findViewById(R.id.txtName);
-        TextView phone = view.findViewById(R.id.txtPhoneNumber);
+        NavHeaderHomePageBinding navHeaderHomePageBinding = DataBindingUtil.bind(view);
 
-        name.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getName());
-        phone.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
+
+        if (navHeaderHomePageBinding != null) {
+
+            image = navHeaderHomePageBinding.image;
+            navHeaderHomePageBinding.txtName.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getName());
+            navHeaderHomePageBinding.txtPhoneNumber.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
+
+            if (!TextUtils.isEmpty(RetrofitClient.currentUser.getImageUrl())) {
+
+                Glide.with(this)
+                        .load(RetrofitClient.currentUser.getImageUrl())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(image);
+
+            }
+
+
+            image.setOnClickListener(view1 -> {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    startActivityForResult(Intent.createChooser(FileUtils.createGetContentIntent(),
+                            "Select a photo"), FILE_REQUEST_PERMISSION);
+
+                }
+
+            });
+
+        }
+
 
         retrofitInterface = RetrofitClient.getInstance().getAPI();
         //slider
@@ -176,7 +289,13 @@ public class HomePageActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (isBackPressed) {
+                super.onBackPressed();
+                return;
+
+            }
+            this.isBackPressed = true;
+            Utils.displayToast(this, "Press back again to exit");
         }
     }
 
@@ -230,23 +349,25 @@ public class HomePageActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_logout) {
+            SharedPrefManager.getInstance(HomePageActivity.this).clear();
 
-        } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_tools) {
+            Utils.displayAlertDialog(this, "Log out", "Are you sure you want to log out?"
+                    , "YES", "NO", (dialog, which) -> {
+                        if (which == -1) {
+                            startActivity(new Intent(HomePageActivity.this, SplashScreenActivity.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        } else if (which == -2) {
+                            dialog.dismiss();
+                        }
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+                    });
 
         }
 
@@ -273,6 +394,14 @@ public class HomePageActivity extends AppCompatActivity
 
         super.onResume();
         updateCounter();
+        isBackPressed = false;
+    }
+
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        isBackPressed = false;
     }
 
     @Override
@@ -281,5 +410,12 @@ public class HomePageActivity extends AppCompatActivity
         super.onDestroy();
 
     }
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+
+    }
+
+
 }
 

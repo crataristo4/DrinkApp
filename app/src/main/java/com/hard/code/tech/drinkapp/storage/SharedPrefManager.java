@@ -54,7 +54,8 @@ public class SharedPrefManager {
                 sharedPreferences.getString("phone", null),
                 sharedPreferences.getString("name", null),
                 sharedPreferences.getString("dob", null),
-                sharedPreferences.getString("address", null)
+                sharedPreferences.getString("address", null),
+                sharedPreferences.getString("imageUrl", null)
         );
     }
 

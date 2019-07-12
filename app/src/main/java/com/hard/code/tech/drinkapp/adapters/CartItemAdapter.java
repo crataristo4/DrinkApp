@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.hard.code.tech.drinkapp.R;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.database.databasemodel.Cart;
@@ -43,14 +44,9 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartIt
         holder.layoutCartItemsBinding.setCartItem(cart);
 
         //auto update cart item when the quantity is changed
-        holder.layoutCartItemsBinding.btnCartItemQty.setOnValueChangeListener((view, oldValue, newValue) -> {
+        cart.quantity = Integer.parseInt(holder.elegantNumberButton.getNumber());
 
-            cart.quantity = newValue;
-
-            //update Cart repository
-            RetrofitClient.cartRepository.updateCart(cart);
-
-        });
+        RetrofitClient.cartRepository.updateCart(cart);
 
     }
 
@@ -62,11 +58,14 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartIt
     static class CartItemViewHolder extends RecyclerView.ViewHolder {
 
         LayoutCartItemsBinding layoutCartItemsBinding;
+        ElegantNumberButton elegantNumberButton;
 
         CartItemViewHolder(@NonNull LayoutCartItemsBinding layoutCartItemsBinding) {
             super(layoutCartItemsBinding.getRoot());
 
             this.layoutCartItemsBinding = layoutCartItemsBinding;
+
+            elegantNumberButton = layoutCartItemsBinding.btnCartItemQty;
         }
     }
 }

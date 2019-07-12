@@ -1,12 +1,14 @@
 package com.hard.code.tech.drinkapp.utils;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.Random;
 
@@ -51,5 +53,16 @@ public class Utils {
         // loading.show();
 
         return loading;
+    }
+
+    static public void displayAlertDialog(Context context, String title, String msg, String btnPos, String btnNeg, DialogInterface.OnClickListener onClickListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setCancelable(false);
+        if (btnPos != null) builder.setPositiveButton(btnPos, onClickListener);
+        if (btnNeg != null) builder.setNegativeButton(btnNeg, onClickListener);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.show();
     }
 }

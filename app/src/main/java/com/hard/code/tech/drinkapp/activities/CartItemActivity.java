@@ -13,6 +13,7 @@ import com.hard.code.tech.drinkapp.adapters.CartItemAdapter;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.database.databasemodel.Cart;
 import com.hard.code.tech.drinkapp.databinding.ActivityCartItemBinding;
+import com.hard.code.tech.drinkapp.utils.Utils;
 
 import java.util.List;
 
@@ -69,5 +70,27 @@ public class CartItemActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.clear();
+    }
+
+    boolean isBackPressed = false;
+
+    @Override
+    public void onBackPressed() {
+        if (isBackPressed) {
+            super.onBackPressed();
+            return;
+
+        }
+        this.isBackPressed = true;
+        Utils.displayToast(this, "Press back again to exit");
+
+    }
+
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+        isBackPressed = false;
     }
 }

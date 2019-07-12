@@ -2,18 +2,19 @@ package com.hard.code.tech.drinkapp.model;
 
 public class Users {
     private int id;
-    private String phone,name,dob,address,error_msg;
+    private String phone, name, dob, address, imageUrl, error_msg;
 
     public Users() {
 
     }
 
-    public Users(int id,String phone, String name, String dob, String address) {
+    public Users(int id, String phone, String name, String dob, String address, String imageUrl) {
         this.id = id;
         this.phone = phone;
         this.name = name;
         this.dob = dob;
         this.address = address;
+        this.imageUrl = imageUrl;
     }
 
     public int getId() {
@@ -50,6 +51,14 @@ public class Users {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public void setAddress(String address) {
