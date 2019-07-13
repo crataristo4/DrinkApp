@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +22,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
@@ -114,15 +112,16 @@ public class HomePageActivity extends AppCompatActivity
 
             File file = FileUtils.getFile(this, fileSelected);
 
-            String filename = new StringBuilder(RetrofitClient.currentUser.getPhone())
-                    .append(FileUtils.getExtension(file.toString()))
-                    .toString();
+            String filename = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone() +
+                    FileUtils.getExtension(file.toString());
 
             ProgressRequestBody requestFile = new ProgressRequestBody(file, this);
 
             final MultipartBody.Part body = MultipartBody.Part.createFormData("imageUrl", filename, requestFile);
 
-            final MultipartBody.Part phone = MultipartBody.Part.createFormData("phone", RetrofitClient.currentUser.getPhone());
+            Log.i("uploadFile: ", String.valueOf(body));
+
+            final String phone = String.valueOf(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
 
             new Thread(() -> {
 
@@ -131,12 +130,14 @@ public class HomePageActivity extends AppCompatActivity
                     public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
 
                         Utils.displayToast(HomePageActivity.this, response.body());
+                        Log.i("response", response.body());
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
 
                         Utils.displayToast(HomePageActivity.this, t.getLocalizedMessage());
+                        Log.i("Error", t.getLocalizedMessage());
                     }
                 });
 
@@ -152,6 +153,8 @@ public class HomePageActivity extends AppCompatActivity
 
         Toolbar toolbar = activityHomePageBinding.layoutAppBarHome.toolbar;
         setSupportActionBar(toolbar);
+
+        Log.i("Phone ", SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
 
 
         DrawerLayout drawer = activityHomePageBinding.drawerLayout;
@@ -172,14 +175,12 @@ public class HomePageActivity extends AppCompatActivity
             navHeaderHomePageBinding.txtName.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getName());
             navHeaderHomePageBinding.txtPhoneNumber.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
 
-            if (!TextUtils.isEmpty(RetrofitClient.currentUser.getImageUrl())) {
+            navHeaderHomePageBinding.txtPhoneNumber.setOnClickListener(v -> {
+                Utils.displayToast(this, "clicked me");
+            });
 
-                Glide.with(this)
-                        .load(RetrofitClient.currentUser.getImageUrl())
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(image);
 
-            }
+            
 
 
             image.setOnClickListener(view1 -> {
@@ -355,12 +356,11 @@ public class HomePageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_logout) {
-            SharedPrefManager.getInstance(HomePageActivity.this).clear();
-
 
             Utils.displayAlertDialog(this, "Log out", "Are you sure you want to log out?"
                     , "YES", "NO", (dialog, which) -> {
                         if (which == -1) {
+                            SharedPrefManager.getInstance(HomePageActivity.this).clear();
                             startActivity(new Intent(HomePageActivity.this, SplashScreenActivity.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                         } else if (which == -2) {
@@ -397,12 +397,6 @@ public class HomePageActivity extends AppCompatActivity
         isBackPressed = false;
     }
 
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        isBackPressed = false;
-    }
 
     @Override
     protected void onDestroy() {

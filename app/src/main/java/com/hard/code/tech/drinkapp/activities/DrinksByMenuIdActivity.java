@@ -14,7 +14,6 @@ import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.api.RetrofitInterface;
 import com.hard.code.tech.drinkapp.databinding.ActivityDrinksByMenuIdBinding;
 import com.hard.code.tech.drinkapp.model.DrinkById;
-import com.hard.code.tech.drinkapp.utils.Utils;
 
 import java.util.List;
 
@@ -78,25 +77,5 @@ public class DrinksByMenuIdActivity extends AppCompatActivity {
     }
 
 
-    boolean isBackPressed = false;
 
-    @Override
-    public void onBackPressed() {
-        if (isBackPressed) {
-            super.onBackPressed();
-            return;
-
-        }
-        this.isBackPressed = true;
-        Utils.displayToast(this, "Press back again to exit");
-
-    }
-
-
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-        isBackPressed = false;
-    }
 }

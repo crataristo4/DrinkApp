@@ -41,11 +41,10 @@ public class ProgressRequestBody extends RequestBody {
 
         long fileLength = file.length();
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-        FileInputStream fileInputStream = new FileInputStream(file);
-        long uploaded = 0;
 
 
-        try {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            long uploaded = 0;
             int read;
             Handler handler = new Handler(Looper.getMainLooper());
             while ((read = fileInputStream.read(buffer)) != -1) {
@@ -55,8 +54,6 @@ public class ProgressRequestBody extends RequestBody {
                 sink.write(buffer, 0, read);
 
             }
-        } finally {
-            fileInputStream.close();
         }
 
 

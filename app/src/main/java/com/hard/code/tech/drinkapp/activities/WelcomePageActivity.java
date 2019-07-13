@@ -85,22 +85,5 @@ public class WelcomePageActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (isBackPressed) {
-            super.onBackPressed();
-            return;
 
-        }
-        this.isBackPressed = true;
-        Utils.displayToast(this, "Press back again to exit");
-
-    }
-
-
-    @Override
-    protected void onResume() {
-        isBackPressed = false;
-        super.onResume();
-    }
 }

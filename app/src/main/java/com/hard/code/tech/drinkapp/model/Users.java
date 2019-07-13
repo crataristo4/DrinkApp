@@ -1,6 +1,16 @@
 package com.hard.code.tech.drinkapp.model;
 
-public class Users {
+import android.content.Context;
+
+import androidx.databinding.BaseObservable;
+import androidx.databinding.BindingAdapter;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class Users extends BaseObservable {
     private int id;
     private String phone, name, dob, address, imageUrl, error_msg;
 
@@ -71,5 +81,15 @@ public class Users {
 
     public void setError_msg(String error_msg) {
         this.error_msg = error_msg;
+    }
+
+    @BindingAdapter("image")
+    public static void loadImage(CircleImageView imageView, String link) {
+        Context context = imageView.getContext();
+
+        Glide.with(context)
+                .load(link)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
     }
 }
