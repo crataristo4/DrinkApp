@@ -27,11 +27,13 @@ public class SharedPrefManager {
     public void saveUsers(Users users) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
         editor.putInt("id", users.getId());
         editor.putString("phone", users.getPhone());
         editor.putString("name", users.getName());
         editor.putString("dob", users.getDob());
         editor.putString("address", users.getAddress());
+        editor.putString("imageUrl", users.getImageUrl());
 
         editor.apply();
     }

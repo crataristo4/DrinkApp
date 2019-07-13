@@ -12,6 +12,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -26,17 +27,21 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
 import com.hard.code.tech.drinkapp.R;
 import com.hard.code.tech.drinkapp.adapters.MenuCategoryAdapter;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.api.RetrofitInterface;
 import com.hard.code.tech.drinkapp.database.datasource.CartRepository;
+import com.hard.code.tech.drinkapp.database.datasource.FavoriteRepository;
 import com.hard.code.tech.drinkapp.database.localstorage.CartDataSource;
-import com.hard.code.tech.drinkapp.database.localstorage.CartDatabase;
+import com.hard.code.tech.drinkapp.database.localstorage.DrinksRoomDatabase;
+import com.hard.code.tech.drinkapp.database.localstorage.FavoriteDataSource;
 import com.hard.code.tech.drinkapp.databinding.ActivityHomePageBinding;
 import com.hard.code.tech.drinkapp.databinding.NavHeaderHomePageBinding;
 import com.hard.code.tech.drinkapp.model.Banners;
 import com.hard.code.tech.drinkapp.model.MenuCategory;
+import com.hard.code.tech.drinkapp.model.UserResponse;
 import com.hard.code.tech.drinkapp.storage.SharedPrefManager;
 import com.hard.code.tech.drinkapp.utils.ProgressRequestBody;
 import com.hard.code.tech.drinkapp.utils.UploadCallBack;
@@ -48,6 +53,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -76,75 +82,7 @@ public class HomePageActivity extends AppCompatActivity
     private CircleImageView image;
     private Uri fileSelected;
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK) {
-
-            if (requestCode == FILE_REQUEST_PERMISSION) {
-
-                if (data != null) {
-
-                    fileSelected = data.getData();
-
-                    if ((fileSelected != null) && !fileSelected.getPath().isEmpty()) {
-
-                        /*Glide.with(HomePageActivity.this).load(fileSelected)
-                                .into(image);*/
-
-                        image.setImageURI(fileSelected);
-                        uploadFile();
-
-                    } else {
-                        Utils.displayToast(HomePageActivity.this, "Cannot upload file try again..");
-                    }
-                }
-            }
-
-        }
-
-    }
-
-    private void uploadFile() {
-
-        if (fileSelected != null) {
-
-            File file = FileUtils.getFile(this, fileSelected);
-
-            String filename = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone() +
-                    FileUtils.getExtension(file.toString());
-
-            ProgressRequestBody requestFile = new ProgressRequestBody(file, this);
-
-            final MultipartBody.Part body = MultipartBody.Part.createFormData("imageUrl", filename, requestFile);
-
-            Log.i("uploadFile: ", String.valueOf(body));
-
-            final String phone = String.valueOf(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
-
-            new Thread(() -> {
-
-                retrofitInterface.uploadFile(phone, body).enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-
-                        Utils.displayToast(HomePageActivity.this, response.body());
-                        Log.i("response", response.body());
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-
-                        Utils.displayToast(HomePageActivity.this, t.getLocalizedMessage());
-                        Log.i("Error", t.getLocalizedMessage());
-                    }
-                });
-
-            }).start();
-
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,7 +92,8 @@ public class HomePageActivity extends AppCompatActivity
         Toolbar toolbar = activityHomePageBinding.layoutAppBarHome.toolbar;
         setSupportActionBar(toolbar);
 
-        Log.i("Phone ", SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
+        Log.i("Phone ", SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone()
+                + "Image :: " + SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl());
 
 
         DrawerLayout drawer = activityHomePageBinding.drawerLayout;
@@ -180,9 +119,6 @@ public class HomePageActivity extends AppCompatActivity
             });
 
 
-            
-
-
             image.setOnClickListener(view1 -> {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -192,6 +128,27 @@ public class HomePageActivity extends AppCompatActivity
                 }
 
             });
+
+
+            Log.i("onCreate: ", SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl());
+
+
+            if (SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl() != null) {
+
+
+
+
+               /* Glide.with(HomePageActivity.this)
+                        .load(new StringBuilder(RetrofitClient.BASE_URL)
+                                .append("imageUrl/")
+                                .append(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone()))
+                        .into(image);*/
+                //.append(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl()))
+
+
+            } else if (SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl() == null) {
+                image.setImageResource(R.drawable.defaultphoto);
+            }
 
         }
 
@@ -220,8 +177,16 @@ public class HomePageActivity extends AppCompatActivity
     }
 
     private void initRoomDatabase() {
-        RetrofitClient.cartDatabase = CartDatabase.getInstance(this);
-        RetrofitClient.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(RetrofitClient.cartDatabase.cartDAO()));
+        RetrofitClient.drinksRoomDatabase = DrinksRoomDatabase.getInstance(this);
+
+        RetrofitClient.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(
+                RetrofitClient.drinksRoomDatabase.cartDAO())
+        );
+
+        RetrofitClient.favoriteRepository = FavoriteRepository.getInstance(
+                FavoriteDataSource.getInstance(RetrofitClient.drinksRoomDatabase.favoriteDAO())
+        );
+
     }
 
     private void getToppings() {
@@ -374,6 +339,101 @@ public class HomePageActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == FILE_REQUEST_PERMISSION) {
+
+                if (data != null) {
+
+                    fileSelected = data.getData();
+
+                    if ((fileSelected != null) && !fileSelected.getPath().isEmpty()) {
+
+                        /*Glide.with(HomePageActivity.this).load(fileSelected)
+                                .into(image);*/
+
+                        image.setImageURI(fileSelected);
+                        uploadFile();
+
+                    } else {
+                        Utils.displayToast(HomePageActivity.this, "Cannot upload file try again..");
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void uploadFile() {
+
+        if (fileSelected != null) {
+
+            File file = FileUtils.getFile(this, fileSelected);
+
+            String filename = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone() +
+                    FileUtils.getExtension(file.toString());
+
+            Log.i("File name : ", file.toString()
+                    + " :: " + FileUtils.getExtension(file.toString()) + " ::" + filename);
+
+            ProgressRequestBody requestFile = new ProgressRequestBody(file, this);
+
+            final MultipartBody.Part body = MultipartBody.Part.createFormData("image", filename, requestFile);
+
+            //final MultipartBody.Part phone = MultipartBody.Part.createFormData("phone",
+            // String.valueOf(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone()));
+
+            final String phone = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone();
+
+            new Thread(() -> {
+
+                retrofitInterface.uploadFile(phone, body).enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<UserResponse> call, @NonNull Response<UserResponse> response) {
+
+                        UserResponse userResponse = response.body();
+
+                        assert userResponse != null;
+                        if (!userResponse.isError()) {
+
+                            SharedPrefManager.getInstance(HomePageActivity.this)
+                                    .saveUsers(userResponse.getUsers());
+                            Utils.displayToast(HomePageActivity.this, userResponse.getMessage());
+                            Log.i("response", new Gson().toJson(userResponse.getUsers()));
+                            Log.i("Image", new Gson().toJson(userResponse.getUsers().getImageUrl()));
+
+
+                        } else {
+                            Utils.displayToast(HomePageActivity.this, userResponse.getMessage());
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<UserResponse> call, @NonNull Throwable t) {
+
+                        Utils.displayToast(HomePageActivity.this, t.getLocalizedMessage());
+                        Log.i("Error", Objects.requireNonNull(t.getLocalizedMessage()));
+
+                    }
+                });
+
+
+            }).start();
+
+
+        }
     }
 
     @Override

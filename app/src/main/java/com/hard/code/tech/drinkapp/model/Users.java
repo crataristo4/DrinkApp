@@ -3,6 +3,7 @@ package com.hard.code.tech.drinkapp.model;
 import android.content.Context;
 
 import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
 import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +36,7 @@ public class Users extends BaseObservable {
         this.id = id;
     }
 
+    @Bindable
     public String getPhone() {
         return phone;
     }
@@ -43,6 +45,7 @@ public class Users extends BaseObservable {
         this.phone = phone;
     }
 
+    @Bindable
     public String getName() {
         return name;
     }
@@ -51,6 +54,7 @@ public class Users extends BaseObservable {
         this.name = name;
     }
 
+    @Bindable
     public String getDob() {
         return dob;
     }
@@ -59,10 +63,12 @@ public class Users extends BaseObservable {
         this.dob = dob;
     }
 
+    @Bindable
     public String getAddress() {
         return address;
     }
 
+    @Bindable
     public String getImageUrl() {
         return imageUrl;
     }

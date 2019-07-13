@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.hard.code.tech.drinkapp.R;
-import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.database.databasemodel.Cart;
 import com.hard.code.tech.drinkapp.databinding.LayoutCartItemsBinding;
 
@@ -44,9 +43,9 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.CartIt
         holder.layoutCartItemsBinding.setCartItem(cart);
 
         //auto update cart item when the quantity is changed
-        cart.quantity = Integer.parseInt(holder.elegantNumberButton.getNumber());
+        // cart.quantity = Integer.parseInt(holder.elegantNumberButton.getNumber());
 
-        RetrofitClient.cartRepository.updateCart(cart);
+        // RetrofitClient.cartRepository.updateCart(cart);
 
     }
 

@@ -54,5 +54,6 @@
     <string name="cart_item">Cart Item</string>
     <string name="place_order">Place Order</string>
     <string name="cart_item_image">Cart item image</string>
+    <string name="favorite">favorite</string>
 
 </resources>

@@ -1,7 +1,10 @@
 package com.hard.code.tech.drinkapp.api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hard.code.tech.drinkapp.database.datasource.CartRepository;
-import com.hard.code.tech.drinkapp.database.localstorage.CartDatabase;
+import com.hard.code.tech.drinkapp.database.datasource.FavoriteRepository;
+import com.hard.code.tech.drinkapp.database.localstorage.DrinksRoomDatabase;
 import com.hard.code.tech.drinkapp.model.DrinkById;
 import com.hard.code.tech.drinkapp.model.MenuCategory;
 import com.hard.code.tech.drinkapp.model.Users;
@@ -12,6 +15,7 @@ import java.util.List;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitClient {
 
@@ -39,15 +43,21 @@ public class RetrofitClient {
 
 
     //database
-    public static CartDatabase cartDatabase;
+    public static DrinksRoomDatabase drinksRoomDatabase;
     public static CartRepository cartRepository;
+    public static FavoriteRepository favoriteRepository;
 
 
     private RetrofitClient() {
 
         if (retrofit == null) {
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+
             retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
         }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -90,17 +91,41 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <Button
-                    android:id="@+id/btnAddToCart"
-                    android:layout_width="wrap_content"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/add_to_cart_bg"
-                    android:drawableEnd="@drawable/ic_add"
-                    android:drawableRight="@drawable/ic_add"
-                    android:text="@string/add_to_cart"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white" />
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:weightSum="2">
+
+                    <Button
+                        android:id="@+id/btnAddToCart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/add_to_cart_bg"
+                        android:drawableEnd="@drawable/ic_add"
+                        android:drawableRight="@drawable/ic_add"
+                        android:text="@string/add_to_cart"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white" />
+
+                    <ImageButton
+                        android:id="@+id/btnAddToFavorite"
+                        style="@android:style/Widget.Material.ImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="64dp"
+                        android:layout_marginRight="64dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/add_to_cart_bg"
+                        android:contentDescription="@string/favorite"
+                        android:textAllCaps="false"
+                        app:srcCompat="@drawable/ic_favorite_white"
+                        tools:targetApi="lollipop" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

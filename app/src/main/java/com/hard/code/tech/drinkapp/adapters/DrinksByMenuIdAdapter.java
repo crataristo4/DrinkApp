@@ -1,6 +1,7 @@
 package com.hard.code.tech.drinkapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import com.bumptech.glide.request.target.Target;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.google.gson.Gson;
 import com.hard.code.tech.drinkapp.R;
+import com.hard.code.tech.drinkapp.activities.CartItemActivity;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.database.databasemodel.Cart;
 import com.hard.code.tech.drinkapp.databinding.LayoutAddToCartBinding;
@@ -91,10 +93,17 @@ public class DrinksByMenuIdAdapter extends RecyclerView.Adapter<DrinksByMenuIdAd
 
                 .into(holder.layoutDrinksByMenuIdBinding.drinkImage);
 
+        //add to cart click event
         holder.layoutDrinksByMenuIdBinding.btnAddToCart.setOnClickListener(view -> {
 
             showAlertDialog(position);
         });
+
+        //favorite process
+
+        //add to favorite click event
+
+
 
     }
 
@@ -272,8 +281,6 @@ public class DrinksByMenuIdAdapter extends RecyclerView.Adapter<DrinksByMenuIdAd
             double finalPrice = price;
             addToCartBuilder.setNegativeButton("Confirm", (dialogInterface, i) -> {
 
-                dialogInterface.dismiss();
-
                 try {
 
                     //create a new Cart Item
@@ -292,6 +299,9 @@ public class DrinksByMenuIdAdapter extends RecyclerView.Adapter<DrinksByMenuIdAd
                     RetrofitClient.cartRepository.insertIntoCart(addCartItem);
 
                     Log.i("Response : ", new Gson().toJson(addCartItem));
+
+                    dialogInterface.dismiss();
+                    context.startActivity(new Intent(context, CartItemActivity.class));
 
                 } catch (Exception e) {
                     e.printStackTrace();

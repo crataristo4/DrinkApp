@@ -3,8 +3,6 @@ package com.hard.code.tech.drinkapp.clickHandlers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import com.hard.code.tech.drinkapp.activities.HomePageActivity;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.api.RetrofitInterface;
 import com.hard.code.tech.drinkapp.model.UserResponse;
-import com.hard.code.tech.drinkapp.model.Users;
 import com.hard.code.tech.drinkapp.storage.SharedPrefManager;
 import com.hard.code.tech.drinkapp.utils.Utils;
 
@@ -41,18 +38,14 @@ public class LoginClickEvent {
 
         String phone = txtPhone.getEditText().getText().toString();
 
-
         if (!phone.isEmpty()
         ) {
 
             txtPhone.setErrorEnabled(false);
 
-
             loading.show();
 
             RetrofitInterface retrofitInterface = RetrofitClient.getInstance().getAPI();
-
-
 
             Call<UserResponse> getUserInfo = retrofitInterface.getUsersInfo(phone);
 

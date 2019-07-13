@@ -57,7 +57,9 @@ public interface RetrofitInterface {
     @GET("getMenus.php")
     Observable<List<MenuCategory>> getCategory();
 
+
+    //    @Headers("Content-Type : multipart/form-data")
     @Multipart
     @POST("uploadFile.php")
-    Call<String> uploadFile(@Part("phone") String phone, @Part MultipartBody.Part file);
+    Call<UserResponse> uploadFile(@Part("phone") String phone, @Part MultipartBody.Part file);
 }
