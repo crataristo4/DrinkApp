@@ -34,7 +34,7 @@ public class LoginClickEvent {
 
     private void validateInputs(final View view) {
         final ProgressDialog loading = Utils.displayProgress(view.getContext(),
-                "please wait while we register you...");
+                "please wait while we log you in...");
 
         String phone = txtPhone.getEditText().getText().toString();
 

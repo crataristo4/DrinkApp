@@ -62,4 +62,6 @@ public interface RetrofitInterface {
     @Multipart
     @POST("uploadFile.php")
     Call<UserResponse> uploadFile(@Part("phone") String phone, @Part MultipartBody.Part file);
+
+
 }

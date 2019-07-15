@@ -30,6 +30,7 @@ import com.hard.code.tech.drinkapp.R;
 import com.hard.code.tech.drinkapp.activities.CartItemActivity;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.database.databasemodel.Cart;
+import com.hard.code.tech.drinkapp.database.databasemodel.Favorite;
 import com.hard.code.tech.drinkapp.databinding.LayoutAddToCartBinding;
 import com.hard.code.tech.drinkapp.databinding.LayoutAlertDialogBinding;
 import com.hard.code.tech.drinkapp.databinding.LayoutDrinksByMenuIdBinding;
@@ -100,13 +101,66 @@ public class DrinksByMenuIdAdapter extends RecyclerView.Adapter<DrinksByMenuIdAd
         });
 
         //favorite process
+        if (RetrofitClient.favoriteRepository.isFavorite(Integer.parseInt(drinkById.getId())) == 1)
+            holder.layoutDrinksByMenuIdBinding.btnAddToFavorite.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite_white));
+        else
+            holder.layoutDrinksByMenuIdBinding.btnAddToFavorite.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite_white));
 
         //add to favorite click event
+        holder.layoutDrinksByMenuIdBinding.btnAddToFavorite.setOnClickListener(view -> {
 
+            if (RetrofitClient.favoriteRepository.isFavorite(Integer.parseInt(drinkById.getId())) != 1) {
+
+                addOrRemoveFavoriteItem(drinkById, true);
+                holder.layoutDrinksByMenuIdBinding.btnAddToFavorite.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite_red));
+
+            } else {
+
+                addOrRemoveFavoriteItem(drinkById, false);
+                holder.layoutDrinksByMenuIdBinding.btnAddToFavorite.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite_white));
+            }
+
+        });
 
 
     }
 
+    /**
+     * adds or removes items to favorite when user taps on icon
+     *
+     * @param drinkById Returns the position of the item selected
+     * @param isAdded   Returns true if added to favorite  or false not
+     **/
+    private void addOrRemoveFavoriteItem(DrinkById drinkById, boolean isAdded) {
+        //creates a new object and assigning values using the constructor
+        Favorite favorite = new Favorite(
+                Integer.parseInt(drinkById.getId()),
+                drinkById.getName(),
+                drinkById.getLink(),
+                drinkById.getPrice(),
+                drinkById.getMenuId());
+
+        //same as constructor
+        /*favorite.id = Integer.parseInt(drinkById.getId());
+        favorite.name = drinkById.getName();
+        favorite.imageUrl = drinkById.getLink();
+        favorite.price = drinkById.getPrice();
+        favorite.menuId = drinkById.getMenuId();*/
+
+        if (isAdded) //insert or add to favorite
+            RetrofitClient.favoriteRepository.insertFavorite(favorite);
+        else //remove or delete to favorite
+            RetrofitClient.favoriteRepository.deleteFavorite(favorite);
+
+
+    }
+
+
+    /**
+     * show an alert dialog that contains the add to cart     *
+     *
+     * @param position Returns the position of the item selected
+     **/
     private void showAlertDialog(int position) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

@@ -9,4 +9,5 @@
     <color name="colorTextTitle">#262626</color>
     <color name="colorGreen">#4CAF50</color>
     <color name="colorBlue">#3F51B5</color>
+    <color name="colorRed">#D50000</color>
 </resources>

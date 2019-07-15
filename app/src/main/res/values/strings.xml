@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Drink Shop App</string>
+    <string name="imgBBApiKey">495a088ac626a56db20a5c7f7c700171</string>
     <string name="contNue">Continue</string>
     <string name="drink_app">Drink App</string>
     <string name="enter_your_name">Enter your name</string>
@@ -55,5 +56,8 @@
     <string name="place_order">Place Order</string>
     <string name="cart_item_image">Cart item image</string>
     <string name="favorite">favorite</string>
+    <string name="shopping_cart">Shopping cart</string>
+    <string name="no_items_found_in_your_favorites">No items found in your favorites</string>
+    <string name="delete">Delete</string>
 
 </resources>

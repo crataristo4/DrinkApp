@@ -39,9 +39,11 @@ import com.hard.code.tech.drinkapp.database.localstorage.DrinksRoomDatabase;
 import com.hard.code.tech.drinkapp.database.localstorage.FavoriteDataSource;
 import com.hard.code.tech.drinkapp.databinding.ActivityHomePageBinding;
 import com.hard.code.tech.drinkapp.databinding.NavHeaderHomePageBinding;
+import com.hard.code.tech.drinkapp.imagebb.DataResponse;
+import com.hard.code.tech.drinkapp.imagebb.ImgBBInterface;
+import com.hard.code.tech.drinkapp.imagebb.ImgBBRetrofit;
 import com.hard.code.tech.drinkapp.model.Banners;
 import com.hard.code.tech.drinkapp.model.MenuCategory;
-import com.hard.code.tech.drinkapp.model.UserResponse;
 import com.hard.code.tech.drinkapp.storage.SharedPrefManager;
 import com.hard.code.tech.drinkapp.utils.ProgressRequestBody;
 import com.hard.code.tech.drinkapp.utils.UploadCallBack;
@@ -81,7 +83,6 @@ public class HomePageActivity extends AppCompatActivity
     private AppCompatImageView cartIcon;
     private CircleImageView image;
     private Uri fileSelected;
-
 
 
     @Override
@@ -283,6 +284,7 @@ public class HomePageActivity extends AppCompatActivity
         return true;
     }
 
+    //update the badge counter
     private void updateCounter() {
 
         if (badge == null) return;
@@ -334,9 +336,13 @@ public class HomePageActivity extends AppCompatActivity
 
                     });
 
+        } else if (id == R.id.nav_favorite) {
+
+            startActivity(new Intent(this, FavoriteItemsActivity.class));
+
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = activityHomePageBinding.drawerLayout;
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -380,8 +386,10 @@ public class HomePageActivity extends AppCompatActivity
 
             File file = FileUtils.getFile(this, fileSelected);
 
-            String filename = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone() +
-                    FileUtils.getExtension(file.toString());
+            /*String filename = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone() +
+                    FileUtils.getExtension(file.toString());*/
+
+            String filename = FileUtils.getExtension(file.toString());
 
             Log.i("File name : ", file.toString()
                     + " :: " + FileUtils.getExtension(file.toString()) + " ::" + filename);
@@ -395,7 +403,35 @@ public class HomePageActivity extends AppCompatActivity
 
             final String phone = SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone();
 
-            new Thread(() -> {
+
+            ImgBBInterface imgBBInterface = ImgBBRetrofit.getInstance().getImgbbApi();
+            imgBBInterface.postImage(getString(R.string.imgBBApiKey), body)
+                    .enqueue(new Callback<DataResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<DataResponse> call, @NonNull Response<DataResponse> response) {
+
+                            DataResponse data = response.body();
+
+                            if (response.isSuccessful()) {
+
+                                Utils.displayToast(HomePageActivity.this, response.message());
+                                Log.i("Image details : ", new Gson().toJson(data.getData().getDisplayUrl()));
+
+                            } else {
+                                Log.i("onResponse: ", response.message());
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<DataResponse> call, @NonNull Throwable t) {
+
+                            Log.i("onFailure: ", Objects.requireNonNull(t.getMessage()));
+
+                        }
+                    });
+
+           /* new Thread(() -> {
 
                 retrofitInterface.uploadFile(phone, body).enqueue(new Callback<UserResponse>() {
                     @Override
@@ -430,7 +466,7 @@ public class HomePageActivity extends AppCompatActivity
                 });
 
 
-            }).start();
+            }).start();*/
 
 
         }

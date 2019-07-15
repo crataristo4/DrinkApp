@@ -6,9 +6,13 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.hard.code.tech.drinkapp.R;
 
 import java.util.Random;
 
@@ -55,7 +59,7 @@ public class Utils {
         return loading;
     }
 
-    static public void displayAlertDialog(Context context, String title, String msg, String btnPos, String btnNeg, DialogInterface.OnClickListener onClickListener) {
+    public static void displayAlertDialog(Context context, String title, String msg, String btnPos, String btnNeg, DialogInterface.OnClickListener onClickListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(msg);
@@ -64,5 +68,14 @@ public class Utils {
         if (btnNeg != null) builder.setNegativeButton(btnNeg, onClickListener);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
         builder.show();
+    }
+
+    public static void makeSnackbar(View view, String message, String action, View.OnClickListener onClickListener) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+        snackbar.setAction(action, onClickListener);
+        snackbar.setActionTextColor(view.getContext().getResources().getColor(R.color.colorPrimaryDark));
+        snackbar.show();
+
+
     }
 }
