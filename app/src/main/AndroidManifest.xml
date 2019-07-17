@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.FavoriteItemsActivity"></activity>
+        <activity android:name=".activities.SearchDrinksActivity"></activity>
+        <activity android:name=".activities.FavoriteItemsActivity" />
         <activity android:name=".activities.CartItemActivity" />
         <activity android:name=".activities.DrinksByMenuIdActivity" />
         <activity android:name=".activities.SplashScreenActivity">

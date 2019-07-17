@@ -6,10 +6,10 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.hard.code.tech.drinkapp.R;
 import com.hard.code.tech.drinkapp.database.databasemodel.Favorite;
 import com.hard.code.tech.drinkapp.databinding.LayoutFavoriteItemsBinding;
@@ -77,21 +77,18 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
     public static class FavoriteViewHolder extends RecyclerView.ViewHolder {
 
         public RelativeLayout viewBackground;
-        public ConstraintLayout viewForeground;
+        public MaterialCardView viewForeground;
         LayoutFavoriteItemsBinding layoutFavoriteItemsBinding;
-//        private ImageView imgDelete;
-//        private TextView txtDelete;
+
 
 
         FavoriteViewHolder(@NonNull LayoutFavoriteItemsBinding layoutFavoriteItemsBinding) {
 
             super(layoutFavoriteItemsBinding.getRoot());
             this.layoutFavoriteItemsBinding = layoutFavoriteItemsBinding;
+            viewBackground = layoutFavoriteItemsBinding.viewBackground;
+            viewForeground = layoutFavoriteItemsBinding.viewForeground;
 
-            //viewBackground = layoutFavoriteItemsBinding.viewBackground;
-            //  viewForeground = layoutFavoriteItemsBinding.viewForeground;
-//            imgDelete = layoutFavoriteItemsBinding.deleteIcon;
-//            txtDelete = layoutFavoriteItemsBinding.txtDelete;
         }
     }
 }

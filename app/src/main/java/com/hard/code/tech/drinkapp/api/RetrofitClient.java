@@ -19,6 +19,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitClient {
 
+    // public static final String BASE_URL = "http://tastydrinks.epizy.com/MyDrinkApp/";
     public static final String BASE_URL = "http://10.0.2.2/MyDrinkApp/";
     private static RetrofitClient instance;
     private static Retrofit retrofit;

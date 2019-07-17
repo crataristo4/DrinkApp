@@ -59,5 +59,6 @@
     <string name="shopping_cart">Shopping cart</string>
     <string name="no_items_found_in_your_favorites">No items found in your favorites</string>
     <string name="delete">Delete</string>
+    <string name="search">Search</string>
 
 </resources>

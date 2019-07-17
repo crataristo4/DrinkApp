@@ -44,6 +44,7 @@ import com.hard.code.tech.drinkapp.imagebb.ImgBBInterface;
 import com.hard.code.tech.drinkapp.imagebb.ImgBBRetrofit;
 import com.hard.code.tech.drinkapp.model.Banners;
 import com.hard.code.tech.drinkapp.model.MenuCategory;
+import com.hard.code.tech.drinkapp.model.UserResponse;
 import com.hard.code.tech.drinkapp.storage.SharedPrefManager;
 import com.hard.code.tech.drinkapp.utils.ProgressRequestBody;
 import com.hard.code.tech.drinkapp.utils.UploadCallBack;
@@ -115,6 +116,8 @@ public class HomePageActivity extends AppCompatActivity
             navHeaderHomePageBinding.txtName.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getName());
             navHeaderHomePageBinding.txtPhoneNumber.setText(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone());
 
+
+
             navHeaderHomePageBinding.txtPhoneNumber.setOnClickListener(v -> {
                 Utils.displayToast(this, "clicked me");
             });
@@ -134,7 +137,7 @@ public class HomePageActivity extends AppCompatActivity
             Log.i("onCreate: ", SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl());
 
 
-            if (SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl() != null) {
+
 
 
 
@@ -144,12 +147,8 @@ public class HomePageActivity extends AppCompatActivity
                                 .append("imageUrl/")
                                 .append(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getPhone()))
                         .into(image);*/
-                //.append(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl()))
+            //.append(SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl()))
 
-
-            } else if (SharedPrefManager.getInstance(HomePageActivity.this).getUsa().getImageUrl() == null) {
-                image.setImageResource(R.drawable.defaultphoto);
-            }
 
         }
 
@@ -312,6 +311,8 @@ public class HomePageActivity extends AppCompatActivity
         if (id == R.id.action_cart) {
 
             return true;
+        } else if (id == R.id.action_search) {
+            startActivity(new Intent(HomePageActivity.this, SearchDrinksActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -417,6 +418,45 @@ public class HomePageActivity extends AppCompatActivity
                                 Utils.displayToast(HomePageActivity.this, response.message());
                                 Log.i("Image details : ", new Gson().toJson(data.getData().getDisplayUrl()));
 
+
+                                new Thread(() -> {
+
+                                    retrofitInterface.uploadFile(phone, data.getData().getDisplayUrl()).enqueue(new Callback<UserResponse>() {
+                                        @Override
+                                        public void onResponse(@NonNull Call<UserResponse> call, @NonNull Response<UserResponse> response) {
+
+                                            UserResponse userResponse = response.body();
+
+                                            assert userResponse != null;
+                                            if (!userResponse.isError()) {
+
+                                                SharedPrefManager.getInstance(HomePageActivity.this)
+                                                        .saveUsers(userResponse.getUsers());
+
+                                                Log.i("response", new Gson().toJson(userResponse.getUsers()));
+                                                Log.i("Image", new Gson().toJson(userResponse.getUsers().getImageUrl()));
+
+
+                                            } else {
+                                                Utils.displayToast(HomePageActivity.this, userResponse.getMessage());
+                                            }
+
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(@NonNull Call<UserResponse> call, @NonNull Throwable t) {
+
+                                            Utils.displayToast(HomePageActivity.this, t.getLocalizedMessage());
+                                            Log.i("Error", Objects.requireNonNull(t.getLocalizedMessage()));
+
+                                        }
+                                    });
+
+
+                                }).start();
+
+
                             } else {
                                 Log.i("onResponse: ", response.message());
                             }
@@ -431,43 +471,6 @@ public class HomePageActivity extends AppCompatActivity
                         }
                     });
 
-           /* new Thread(() -> {
-
-                retrofitInterface.uploadFile(phone, body).enqueue(new Callback<UserResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<UserResponse> call, @NonNull Response<UserResponse> response) {
-
-                        UserResponse userResponse = response.body();
-
-                        assert userResponse != null;
-                        if (!userResponse.isError()) {
-
-                            SharedPrefManager.getInstance(HomePageActivity.this)
-                                    .saveUsers(userResponse.getUsers());
-                            Utils.displayToast(HomePageActivity.this, userResponse.getMessage());
-                            Log.i("response", new Gson().toJson(userResponse.getUsers()));
-                            Log.i("Image", new Gson().toJson(userResponse.getUsers().getImageUrl()));
-
-
-                        } else {
-                            Utils.displayToast(HomePageActivity.this, userResponse.getMessage());
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<UserResponse> call, @NonNull Throwable t) {
-
-                        Utils.displayToast(HomePageActivity.this, t.getLocalizedMessage());
-                        Log.i("Error", Objects.requireNonNull(t.getLocalizedMessage()));
-
-                    }
-                });
-
-
-            }).start();*/
-
 
         }
     }
@@ -479,6 +482,8 @@ public class HomePageActivity extends AppCompatActivity
         if (!SharedPrefManager.getInstance(this).isLoggedIn()) {
             startActivity(new Intent(this, WelcomePageActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+        } else {
 
         }
 

@@ -1,18 +1,23 @@
 package com.hard.code.tech.drinkapp.activities;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.hard.code.tech.drinkapp.Interface.RecyclerItemTouchHelper;
 import com.hard.code.tech.drinkapp.R;
 import com.hard.code.tech.drinkapp.adapters.FavoriteAdapter;
 import com.hard.code.tech.drinkapp.api.RetrofitClient;
 import com.hard.code.tech.drinkapp.database.databasemodel.Favorite;
 import com.hard.code.tech.drinkapp.databinding.ActivityFavoriteItemsBinding;
+import com.hard.code.tech.drinkapp.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +26,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class FavoriteItemsActivity extends AppCompatActivity {
+public class FavoriteItemsActivity extends AppCompatActivity
+        implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     ActivityFavoriteItemsBinding activityFavoriteItemsBinding;
     FavoriteAdapter favoriteAdapter;
@@ -43,7 +49,7 @@ public class FavoriteItemsActivity extends AppCompatActivity {
 
 
         loadFavoriteItems();
-        //  swipeLeftToDelete();
+        swipeLeftToDelete();
 
     }
 
@@ -74,7 +80,7 @@ public class FavoriteItemsActivity extends AppCompatActivity {
 
     }
 
-    /*private void swipeLeftToDelete() {
+    private void swipeLeftToDelete() {
         // adding item touch helper
         // only ItemTouchHelper.LEFT added to detect Right to Left swipe
         // if you want both Right -> Left and Left -> Right
@@ -139,7 +145,7 @@ public class FavoriteItemsActivity extends AppCompatActivity {
         }
 
     }
-*/
+
 
     @Override
     protected void onResume() {
